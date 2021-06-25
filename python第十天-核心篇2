@@ -1,0 +1,28 @@
+迭代：访问集合元素的一种方式。迭代器是一个可以记住遍历的位置的对象，迭代器对象从集合的第一个元素开始访问，直到所有的元素被访问完结束。迭代器只能往前不会后退。
+
+1.可迭代对象： 在上次的基础上在进行迭代
+
+可以直接作用于for循环的数据类型，一类是集合数据类型，如list，tuple,dict,set,str等，
+一类是generator，包括生成器和带yield的generator function，这些对象统称为可迭代对象iterable
+
+2.判断是否可迭代
+
+用ininstance()判断一个对象是否是iterable对象。
+
+from collections.abc import Iterator #3.8版本collection改为collection.abc
+isinstance([1,2,3],Iterator)
+
+迭代器：
+生成器一定是迭代器
+可以被next()函数调用的并不False断返回下一个值的对象成为迭代器： Iterator
+可以使用instance()判断一个对象是否是Iterator对象
+isinstance([],Iterator)
+False
+
+创建迭代器
+iter()函数
+
+把list、dict、str等iterable变成iterator可以使用iter()函数
+
+isinstance(iter([]),Iterator)
+True
