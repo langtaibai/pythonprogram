@@ -1,0 +1,154 @@
+装饰器
+程序开发经常会用到的功能，用好如虎添翼，面试必问。写代码遵循开放封闭原则，已经实现的功能代码不允许被修改，但可以被扩展。
+开放： 是对函数功能的扩展
+封闭： 不修改原函数的code
+@函数名是python的一种语法糖 有特殊功能
+def w1(func):
+    print("---正在装饰---")
+    def inner():
+        print("---正在验证权限---")
+        func()
+    return inner    #注意w1就是一个闭包
+#只要python解释器执行到了这个代码，那么久会自动的进行装饰，而不是等到调用的时候再装饰
+@w1
+def f1():
+    print("---f1---")
+result：
+---正在装饰---
+---正在验证权限---
+---f1---
+两个装饰器的时候，要先调用最近的那一个
+def help(func):
+    def wrapper():
+        return "<b>" + func() + "</b>"
+    return wrapper
+
+def help1(func):
+    def wrapper():
+        return "<i>" + func() + "</i>"
+    return wrapper
+
+@help
+@help1
+def test3():
+    return "hello world"
+
+ret = test3()
+print(ret)
+result：
+<b><i>hello world</i></b>  #先调用@help1在调用@help
+装饰器执行的时间：
+def w1(func):
+    print("---正在装饰---")
+    def inner():
+        print("---正在验证权限---")
+        func()
+    return inner
+#只要python解释器执行到了这个代码就会自动进行装饰，而不是等到调用再装
+@w1
+def f1():
+    print("---f1---")
+#这是执行代码会输出：---正在装饰--- 01-02-08
+#调用F1之前已经进行装饰了
+f1()
+------
+def help(func):
+    print("正在装饰1")
+    def wrapper():
+        print("正在验证权限1")
+        func()
+    return wrapper
+
+def help1(func):
+    print("正在装饰2")
+    def wrapper():
+        print("正在验证权限2")
+        func()
+    return wrapper
+
+@help
+@help1
+def test3():
+    print("-----test---")
+
+test3()
+result:
+正在装饰2
+正在装饰1
+正在验证权限1
+正在验证权限2
+-----test---
+
+使用装饰器对参数的函数进行装饰
+def func(functionName):
+    print("---func---1---")
+    def func_in(a,b):#如果a,b没有定义，会导致16行的调用失败
+        print("---func_in---1---")
+        functionName(a,b)#如果没有把a,b当做实参传递，会导致调用12行函数失败
+        print("---func_in---2---")
+    print("---func---2---")
+    return func_in
+@func
+def test(a,b):
+    print("---test-a=%d,b=%d---"%(a,b))
+test(11,22)
+
+使用装饰器对不定长参数的函数进行装饰
+def func(functionName):
+    print("---func---1---")
+    def func_in(*args,**kwargs):#如果a,b没有定义，会导致16行的调用失败
+        print("---func_in---1---")
+        functionName(*args,**kwargs)#如果没有把a,b当做实参传递，会导致调用12行函数失败
+        print("---func_in---2---")
+    print("---func---2---")
+    return func_in
+@func
+def test(a,b,c):
+    print("---test-a=%d,b=%d,c=%d---"%(a,b,c))
+@func
+def test2(a,b,c,d):
+    print("---test-a=%d,b=%d,c=%d,d=%d---"%(a,b,c,d))
+test2(11,22,33,44)
+
+使用装饰器对带有返回值的函数进行装饰
+def func(functionName):
+    print("---func---1---")
+    def func_in():
+        print("---func_in---1---")
+        ret = functionName()#保存 返回来的haha
+        print("---func_in---2---")
+        return ret#把haha返回到17行处的调用
+    print("---func---2---")
+    return func_in
+@func
+def test():
+    print("---test---")
+    return "haha"
+
+ret = test()
+print("test return value is %s"%ret)
+
+通用装饰器 就是装饰器中有*args,**kwargs以及有返回值
+def func(functionName):
+    def func_in(*args,**kwargs):
+        print("---记录日志---")
+        ret = functionName(*args,**kwargs)
+        return ret
+    return func_in
+@func
+def test():
+    print("---test---")
+    return "haha"
+@func
+def test2():
+    print("---test2---")
+@func
+def test3(a):
+    print("---test3-a=%d--"%a)
+ret = test()
+print("test return value is %s"%ret)
+
+a = test2()
+print("test return value is %s"%a)
+
+test3(11)
