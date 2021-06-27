@@ -1,0 +1,99 @@
+作用域
+命名空间  对象生效的范围比如： 二班的张三
+print(locals())打印局部变量
+print（globals()）打印全局变量
+LEGB规则
+就是使用变量的顺序
+locals -->enclosing function -->globals -->builtins
+
+locals 当前所在命名空间（如函数、模块） ，函数的参数也属于命名空间内的变量
+
+enclosing 外部嵌套函数的命名空间（闭包中常见）
+
+def fun1():
+    a = 10
+    def fun2():
+        #a位于外部嵌套函数的命名空间
+        print(a)
+globals，全局变量，函数定义所在模块的命名空间
+
+a = 1
+def fun():
+    #需要通过global指令来声明全局变量
+    global a
+    #修改全局变量，而不是创建一个新的local变量
+    a = 2
+builtins，内建模块的命名空间
+
+python在启动时会自动为我们载入很多内建的函数、类，比如dict,list,type,print都位于__builtin__模块中，可以用dir(__builtin__)查看
+
+python动态添加属性以及方法
+
+class Person(object):
+    def __init__(self,newName,newAge):
+        self.name = newName
+        self.age = newAge
+laowang = Person("老王",1000)
+print(laowang.name)
+print(laowang.age)
+laowang.addr = "北京..."#对象添加属性
+print(laowang.addr)
+
+laozhao = Person("老赵",18)
+#print(laozhao.addr)
+
+Person.num = 100#类添加属性
+print(laowang.num)
+print(laozhao.num)
+添加实列方法，这是针对对象使用types.MethodType
+
+import types
+class Person(object):
+    def __init__(self,newName,newAge):
+        self.name = newName
+        self.age = newAge
+    def eat(self):
+        print("---%s正在吃---"%self.name)
+def run(self):
+    print("----%s正在泡---"%self.name)
+        
+p1 = Person("p1",10)
+p1.eat()
+#p1.run = run
+#p1.run()#虽然p1对象中run属性已经指向10行的函数，但这句代码还不正确
+        #因为run属性指向的函数是后来添加的，并没有把p1当做第一个参数，导致第10行函数调用的时候，出现缺少参数的问题
+p1.run = types.MethodType(run,p1)#函数名，实体对象，def run(self)把参数p1传进去run函数
+                                 #p1.run作为右边的返回值
+
+p1.run()
+添加静态方法和添加类方法
+
+class Person(object):
+    def __init__(self,newName,newAge):
+        self.name = newName
+        self.age = newAge
+def test():
+    print("---static method---")
+Person.test = test
+Person.test()
+添加类方法
+
+class Person(object):
+    def __init__(self,newName,newAge):
+        self.name = newName
+        self.age = newAge
+def printNum(cls):
+    print("---class method---")
+Person.printNum = printNum
+Person.printNum()
+__slots__的作用
+
+为了达到限制的目的，python允许在定义class的时候，定义一个特殊的__slots__变量，来限制该class实例能添加的属性
+
+class Person(object):
+    __slots__=("name","age")
+P = Person()
+P.name = "老王"
+P.age = 20
+P.score = 100
+__slots__定义的属性仅对当前类实例起作用，对继承的子类不起作用
