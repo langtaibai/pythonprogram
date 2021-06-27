@@ -1,0 +1,62 @@
+生成器
+在python中，一边循环一边计算的机制，称为生成器generator
+计算的方式保存，只有使用的时候才生成，节省大量内存
+生成器的第一种方式
+
+a = [x*2 for x in range(10)]#列表生成式
+a = [x*2 for x in range(1000000)]#不想直接生成，保留计算方式，每用一个生成一个
+b = (x*2 for x in range(10))#把列表生成式的【】换成（）
+b
+next(b)#next()函数获得生成器的下一个返回值
+第二种方式
+
+def creatNum():
+    print("----start----")
+    a,b = 0,1
+    for i in range(5):
+        print("---1----")
+        yield b                    #yield作用第一是生成值，另外会让程序停在这地方，等下一次next（）接着执行
+        print("---2---")
+        a,b = b,a+b
+        print("---3---")
+    print("---stop---")
+a = creatNum()#creatNum()不会调函数生成，而是返回对象，需要找变量保存，生成器对象，直接createNum()没有作用的只要加yield就不能当一个普通函数调用
+for num in a:
+    print(num)
+
+   
+ 
+send
+
+def test():
+    i = 0
+    while i < 5:
+        temp = yield i 
+        print(temp)
+        i+=1
+t = test()
+t.__next__()
+t.send("haha")#和next不同点，给yield i整个表达式一个结果，temp接收下次send发过来的值,并且会想next那样执行一次
+t.__next__()
+强调
+
+上来就写t.send("haha"),要先调用t.__next__()或者先写t.send(None)
+
+生成器完成多任务 
+
+多任务：协程、进程、线程  协程最快
+
+def test1():
+    while True:
+        print("---1---")
+        yield None
+def test2():
+    while True:
+        print("---2---")
+        yield None
+
+t1 = test1()
+t2 = test2()
+while True:
+    t1.__next__()
+    t2.__next__()
