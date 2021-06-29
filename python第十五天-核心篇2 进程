@@ -1,0 +1,91 @@
+多任务：
+调度算法：
+1.有时间片轮转
+2. 优先级调度
+并发：任务多于CPU核数
+并行：
+
+进程： 正在运行的程序
+进程的创建：fork
+linux创建进程函数fork()正确调用一次的时候有两个返回值：
+子进程返回：0
+父进程返回：>0的整数(返回子进程ID号)
+而错误的时候返回－1
+import os
+import time
+ret = os.fork()
+if ret == 0:
+    while True:
+        print("-----1------")
+        time.sleep(1)
+else:
+    while True:
+        print("-----2------")
+        time.sleep(1)
+result:  这是因为os.fork()之后又两个返回值给ret一个是子进程一个是父进程，这样就同时让ret既能让第一个条件语句执行也能让第二个语句执行，这个先执行1还是执行2这是系统调度决定的
+-----2------
+------1-----
+-----2------
+-----1------
+....
+
+os.getpid　　程序执行时的ID
+os.getppid 得到的是父进程的ID
+多任务的一种就是多任务
+主进程和子进程执行的顺序
+test.py
+import os
+import time
+ret = os.fork()
+if ret == 0:
+    print("----子进程------")
+    time.sleep(5)
+    print("----子进程over----")
+else:
+    print("-----父进程------")
+    time.sleep(3)
+  result:
+  dell@localhost:~$ python3 test.py
+  ----父进程----
+  ----子进程------
+  dell@localhost:~----子进程over----
+   <-光标到这因为python3有自动换行功能
+  
+ test.py
+import os
+import time
+ret = os.fork()
+if ret == 0:
+    print("----子进程------")
+    time.sleep(5)
+    print("----子进程over----"，end = "")#end=""取消自动换行
+else:
+    print("-----父进程------")
+    time.sleep(3)
+  result:
+  dell@localhost:~$ python3 test.py
+  ----父进程----
+  ----子进程------
+  dell@localhost:~----子进程over----
+  
+ 子进程执行的过程跟我们之前学的方式一样从头到尾执行  
+ test.py
+import os
+import time
+ret = os.fork()
+if ret == 0:
+    print("----子进程------")
+    time.sleep(5)
+    print("----子进程over----"，end = "")#end=""取消自动换行
+else:
+    print("-----父进程------")
+    time.sleep(3)
+print("----over-----")
+result:
+dell@localhost:~$ python3 test.py
+  ----父进程----
+  ----over-----
+  ----子进程------
+  dell@localhost:~----子进程over----
+  ----over-----
+  
