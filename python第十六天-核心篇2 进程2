@@ -1,0 +1,38 @@
+全局变量在多个进程中不共享
+进程之间时相互独立的，不管是全局变量还是局部变量都不是共享的，若想进程间进行有联系就要借助进程通信
+同一台电脑上不同进程通信有N多种，对于不同电脑的进程通信需要借助网络比如两台电脑的QQ通信
+import os
+import time
+global g_num
+g_num = 0
+ret = os.fork()
+if ret == 0:
+    g_num += 1
+    print("child process g_num=%d"%g_num)
+else:
+    time.sleep(5)#这个sleep 5s是为了执行g_num += 1
+    print("parent process g_num=%d"%g_num)
+result：
+child process g_num=1
+parent process g_num= 0
+
+多个fork()
+n个fork则有2^n个进程
+import os
+import time
+if ret == 0:
+    print("----1----")
+else:
+    print("----2----")
+#上面子进程和父进程都会执行下面一段代码    
+if ret == 0:
+    print("----3----")
+else:
+    print("----4----")
+result:为什么会有两个3和两个4这是因为上面1，2进程执行完都会在执行
+----2----
+----4----   
+----1----
+----4----
+----3----
+----3----
